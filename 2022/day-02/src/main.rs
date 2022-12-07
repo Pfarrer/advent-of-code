@@ -140,7 +140,7 @@ mod part_two {
 }
 
 fn main() {
-    let mut f = File::open("2022/day-02/input.txt").unwrap();
+    let mut f = File::open("input.txt").unwrap();
     let mut input = String::new();
     f.read_to_string(&mut input).unwrap();
 

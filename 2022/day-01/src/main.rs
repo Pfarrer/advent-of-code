@@ -11,7 +11,7 @@ fn calories_sum_top_n(input: &str, top_n: usize) -> u64 {
 }
 
 fn main() {
-    let mut f = File::open("2022/day-01/input.txt").unwrap();
+    let mut f = File::open("input.txt").unwrap();
     let mut input = String::new();
     f.read_to_string(&mut input).unwrap();
 
