@@ -1,5 +1,13 @@
-use nom::{*, branch::alt, bytes::complete::tag, character::complete::{newline, digit1, space1, not_line_ending}, sequence::terminated, combinator::opt, multi::{many0, separated_list0}};
 use crate::{CommandLine, LsLine};
+use nom::{
+    branch::alt,
+    bytes::complete::tag,
+    character::complete::{digit1, newline, not_line_ending, space1},
+    combinator::opt,
+    multi::{many0, separated_list0},
+    sequence::terminated,
+    *,
+};
 
 fn cd_command(input: &str) -> IResult<&str, CommandLine> {
     let (input, _) = tag("$ cd ")(input)?;
@@ -10,7 +18,8 @@ fn cd_command(input: &str) -> IResult<&str, CommandLine> {
 
 fn ls_command(input: &str) -> IResult<&str, CommandLine> {
     let (input, _) = tag("$ ls\n")(input)?;
-    let (input, ls_outputs) = separated_list0(tag("\n"), alt((ls_dir_output, ls_file_output)))(input)?;
+    let (input, ls_outputs) =
+        separated_list0(tag("\n"), alt((ls_dir_output, ls_file_output)))(input)?;
 
     Ok((input, CommandLine::LsCommand(ls_outputs)))
 }
@@ -27,7 +36,10 @@ fn ls_file_output(input: &str) -> IResult<&str, LsLine> {
     let (input, _) = space1(input)?;
     let (input, name) = not_line_ending(input)?;
 
-    Ok((input, LsLine::File(name.to_string(), file_size.parse().unwrap())))
+    Ok((
+        input,
+        LsLine::File(name.to_string(), file_size.parse().unwrap()),
+    ))
 }
 
 fn command_line(input: &str) -> IResult<&str, CommandLine> {
@@ -57,35 +69,42 @@ pub mod tests {
 
     #[test]
     fn simple_ls_works() {
-        let command_lines = parse("$ ls
+        let command_lines = parse(
+            "$ ls
 dir a
-14848514 b.txt");
+14848514 b.txt",
+        );
         assert_eq!(command_lines.len(), 1);
-        assert_eq!(command_lines[0], CommandLine::LsCommand(vec![
-            LsLine::Dir("a".to_string()),
-            LsLine::File("b.txt".to_string(), 14848514),
-        ]));
+        assert_eq!(
+            command_lines[0],
+            CommandLine::LsCommand(vec![
+                LsLine::Dir("a".to_string()),
+                LsLine::File("b.txt".to_string(), 14848514),
+            ])
+        );
     }
 
     #[test]
     fn mixed_example_works() {
-        let command_lines = parse("$ cd ..
+        let command_lines = parse(
+            "$ cd ..
 $ ls
 dir a
 $ cd a
 $ ls
 14848514 b.txt
-");
+",
+        );
         assert_eq!(command_lines.len(), 4);
         assert_eq!(command_lines[0], CommandLine::CdCommand("..".to_string()));
-        assert_eq!(command_lines[1], CommandLine::LsCommand(vec![
-            LsLine::Dir("a".to_string()),
-        ]));
+        assert_eq!(
+            command_lines[1],
+            CommandLine::LsCommand(vec![LsLine::Dir("a".to_string()),])
+        );
         assert_eq!(command_lines[2], CommandLine::CdCommand("a".to_string()));
-        assert_eq!(command_lines[3], CommandLine::LsCommand(vec![
-            LsLine::File("b.txt".to_string(), 14848514),
-        ]));
+        assert_eq!(
+            command_lines[3],
+            CommandLine::LsCommand(vec![LsLine::File("b.txt".to_string(), 14848514),])
+        );
     }
-
-    
 }

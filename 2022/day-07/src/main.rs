@@ -1,7 +1,7 @@
 use std::{fs::File, io::Read};
 
-mod parser;
 mod map_builder;
+mod parser;
 
 #[derive(Debug, PartialEq)]
 pub enum CommandLine {
@@ -35,13 +35,13 @@ fn smallest_possible_folder_to_delete(input: &str) -> usize {
 
     let mut dir_sizes: Vec<_> = map.values().collect();
     dir_sizes.sort();
-    
+
     for dir_size in dir_sizes {
         if *dir_size >= disk_size_needed {
             return *dir_size;
         }
     }
-    
+
     panic!()
 }
 

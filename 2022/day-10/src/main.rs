@@ -7,16 +7,20 @@ enum Instruction {
 
 fn parse_instruction(input: &str) -> Instruction {
     let parts: Vec<_> = input.trim().split_whitespace().collect();
-    
+
     match parts[0] {
         "noop" => Instruction::Noop,
         "addx" => Instruction::AddX(parts[1].parse().unwrap()),
-        _ => panic!()
+        _ => panic!(),
     }
 }
 
 fn parse_input(input: &str) -> Vec<Instruction> {
-    input.trim().split("\n").map(|line| parse_instruction(line)).collect()
+    input
+        .trim()
+        .split("\n")
+        .map(|line| parse_instruction(line))
+        .collect()
 }
 
 fn simulate_register_value_by_cycle(program: &Vec<Instruction>) -> Vec<i32> {
@@ -35,11 +39,14 @@ fn simulate_register_value_by_cycle(program: &Vec<Instruction>) -> Vec<i32> {
 
 fn sum_signal_strengths(program: &Vec<Instruction>) -> i32 {
     let value_by_cycle = simulate_register_value_by_cycle(program);
-    [20, 60, 100, 140, 180, 220].iter().map(|cycle| cycle * value_by_cycle[(*cycle-1) as usize]).sum()
+    [20, 60, 100, 140, 180, 220]
+        .iter()
+        .map(|cycle| cycle * value_by_cycle[(*cycle - 1) as usize])
+        .sum()
 }
 
 fn sprite_range(x_value: i32) -> Range<i32> {
-    x_value-1..x_value+2
+    x_value - 1..x_value + 2
 }
 
 fn render_crt_image(program: &Vec<Instruction>) -> String {
@@ -47,14 +54,26 @@ fn render_crt_image(program: &Vec<Instruction>) -> String {
     const SCREEN_HEIGHT: usize = 6;
 
     let value_by_cycle = simulate_register_value_by_cycle(program);
-    let complete_string: Vec<char> = value_by_cycle.iter()
+    let complete_string: Vec<char> = value_by_cycle
+        .iter()
         .take(SCREEN_WIDTH * SCREEN_HEIGHT)
         .enumerate()
-        .map(|(cycle, x_value)| if sprite_range(*x_value).contains(&((cycle % SCREEN_WIDTH) as i32)) { '#' } else { '.' })
+        .map(|(cycle, x_value)| {
+            if sprite_range(*x_value).contains(&((cycle % SCREEN_WIDTH) as i32)) {
+                '#'
+            } else {
+                '.'
+            }
+        })
         .collect();
 
     let lines: Vec<&[char]> = complete_string.chunks(SCREEN_WIDTH).collect();
-    lines.iter().copied().map(|line| line.iter().collect::<String>()).collect::<Vec<String>>().join("\n")
+    lines
+        .iter()
+        .copied()
+        .map(|line| line.iter().collect::<String>())
+        .collect::<Vec<String>>()
+        .join("\n")
 }
 
 fn main() {
@@ -229,11 +248,14 @@ noop";
     fn part2_works() {
         let program = parse_input(EXAMPLE_INPUT);
         let result = render_crt_image(&program);
-        assert_eq!(result, "##..##..##..##..##..##..##..##..##..##..
+        assert_eq!(
+            result,
+            "##..##..##..##..##..##..##..##..##..##..
 ###...###...###...###...###...###...###.
 ####....####....####....####....####....
 #####.....#####.....#####.....#####.....
 ######......######......######......####
-#######.......#######.......#######.....");
+#######.......#######.......#######....."
+        );
     }
 }

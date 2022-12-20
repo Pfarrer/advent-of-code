@@ -11,24 +11,32 @@ pub struct Instruction {
     count: usize,
 }
 
-fn execute_instructions(stacks: &mut Vec<SupplyStack>, instructions: &Vec<Instruction>, crane_capacity: usize) {
+fn execute_instructions(
+    stacks: &mut Vec<SupplyStack>,
+    instructions: &Vec<Instruction>,
+    crane_capacity: usize,
+) {
     for instruction in instructions {
         for i in (0..instruction.count).step_by(crane_capacity) {
             let mut crane_bay = Vec::new();
             for _ in 0..std::cmp::min(instruction.count, crane_capacity) {
-                let value = stacks[instruction.from-1].pop().unwrap();
+                let value = stacks[instruction.from - 1].pop().unwrap();
                 crane_bay.push(value);
             }
-            
+
             for value in crane_bay.iter().rev() {
-                stacks[instruction.to-1].push(*value);
+                stacks[instruction.to - 1].push(*value);
             }
         }
     }
 }
 
 fn get_top_stack_items(stacks: &Vec<SupplyStack>) -> String {
-    stacks.iter().filter_map(|stack| stack.last()).into_iter().collect()
+    stacks
+        .iter()
+        .filter_map(|stack| stack.last())
+        .into_iter()
+        .collect()
 }
 
 fn rearrange_stack(input: &str, crane_capacity: usize) -> String {

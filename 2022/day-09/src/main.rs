@@ -2,14 +2,17 @@ use std::{fs::File, io::Read};
 
 #[derive(Copy, Clone)]
 enum HeadMovement {
-    UP, DOWN, LEFT, RIGHT
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT,
 }
 
 type Position = (i64, i64);
 
 fn parse_input_line(input: &str) -> Vec<HeadMovement> {
     let parts: Vec<_> = input.trim().split_whitespace().collect();
-    
+
     let movement = match parts[0] {
         "U" => HeadMovement::UP,
         "D" => HeadMovement::DOWN,
@@ -18,12 +21,16 @@ fn parse_input_line(input: &str) -> Vec<HeadMovement> {
         _ => panic!(),
     };
     let count: usize = parts[1].parse().unwrap();
-    
+
     [movement].repeat(count)
 }
 
 fn parse_input(input: &str) -> Vec<HeadMovement> {
-    input.trim().split("\n").flat_map(|line| parse_input_line(line)).collect()
+    input
+        .trim()
+        .split("\n")
+        .flat_map(|line| parse_input_line(line))
+        .collect()
 }
 
 fn move_head(head_pos: &mut Position, movement: &HeadMovement) {
@@ -46,7 +53,7 @@ fn move_tail(head_pos: &Position, tail_pos: &Position) -> Option<Position> {
     if is_neighboring_point(head_pos, tail_pos) {
         return None;
     }
-    
+
     let mut moved_tail_pos = tail_pos.clone();
 
     if head_pos.0 > tail_pos.0 {
@@ -64,15 +71,18 @@ fn move_tail(head_pos: &Position, tail_pos: &Position) -> Option<Position> {
     Some(moved_tail_pos)
 }
 
-fn simulate_rope_positions(head_movements: &Vec<HeadMovement>, mut rope: Vec<Position>) -> Vec<Position> {
-    let mut tail_positions = vec!(rope.last().unwrap().clone());
+fn simulate_rope_positions(
+    head_movements: &Vec<HeadMovement>,
+    mut rope: Vec<Position>,
+) -> Vec<Position> {
+    let mut tail_positions = vec![rope.last().unwrap().clone()];
 
     for movement in head_movements {
         move_head(rope.first_mut().unwrap(), movement);
 
-        for head_index in 0..rope.len()-1 {
-            if let Some(moved_tail_pos) = move_tail(&rope[head_index], &rope[head_index+1]) {
-                rope[head_index+1] = moved_tail_pos;
+        for head_index in 0..rope.len() - 1 {
+            if let Some(moved_tail_pos) = move_tail(&rope[head_index], &rope[head_index + 1]) {
+                rope[head_index + 1] = moved_tail_pos;
             }
         }
 
@@ -83,7 +93,7 @@ fn simulate_rope_positions(head_movements: &Vec<HeadMovement>, mut rope: Vec<Pos
 }
 
 fn count_unique_tail_positions(head_movements: &Vec<HeadMovement>, rope: Vec<Position>) -> usize {
-    let  mut tail_positions = simulate_rope_positions(&head_movements, rope);
+    let mut tail_positions = simulate_rope_positions(&head_movements, rope);
 
     tail_positions.sort();
     tail_positions.dedup();
@@ -96,8 +106,14 @@ fn main() {
     f.read_to_string(&mut input).unwrap();
 
     let head_movements = parse_input(&input);
-    println!("Part One: {}", count_unique_tail_positions(&head_movements, [(0, 0)].repeat(2)));
-    println!("Part Two: {}", count_unique_tail_positions(&head_movements, [(0, 0)].repeat(10)));
+    println!(
+        "Part One: {}",
+        count_unique_tail_positions(&head_movements, [(0, 0)].repeat(2))
+    );
+    println!(
+        "Part Two: {}",
+        count_unique_tail_positions(&head_movements, [(0, 0)].repeat(10))
+    );
 }
 
 #[cfg(test)]

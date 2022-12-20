@@ -4,7 +4,7 @@ use std::{fs::File, io::Read};
 enum Move {
     Rock,
     Paper,
-    Scissors
+    Scissors,
 }
 
 impl Move {
@@ -28,7 +28,7 @@ impl Move {
 enum Outcome {
     Lost,
     Draw,
-    Won
+    Won,
 }
 
 struct Round {
@@ -73,7 +73,6 @@ impl Round {
 mod part_one {
     use crate::*;
 
-
     fn parse_round(input: &str) -> Round {
         let elements: Vec<&str> = input.split_whitespace().collect();
 
@@ -97,7 +96,11 @@ mod part_one {
     }
 
     fn parse_rounds(input: &str) -> Vec<Round> {
-        input.trim().split("\n").map(|line| parse_round(line)).collect()
+        input
+            .trim()
+            .split("\n")
+            .map(|line| parse_round(line))
+            .collect()
     }
 
     pub fn rock_paper_scissors_score(input: &str) -> usize {
@@ -131,7 +134,11 @@ mod part_two {
     }
 
     fn parse_rounds(input: &str) -> Vec<Round> {
-        input.trim().split("\n").map(|line| parse_round(line)).collect()
+        input
+            .trim()
+            .split("\n")
+            .map(|line| parse_round(line))
+            .collect()
     }
 
     pub fn rock_paper_scissors_score(input: &str) -> usize {

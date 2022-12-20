@@ -1,4 +1,4 @@
-use std::{fs::File, io::Read, collections::VecDeque};
+use std::{collections::VecDeque, fs::File, io::Read};
 
 struct StartOfPacketDetector {
     buf_size: usize,

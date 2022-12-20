@@ -1,56 +1,83 @@
-use std::{fs::File, io::Read, cmp::max};
+use std::{cmp::max, fs::File, io::Read};
 
 type Forrest = Vec<TreeRow>;
 type TreeRow = Vec<u8>;
 
-fn vertical_iterator<'a>(forrest: &'a Forrest, column: usize, top_to_bottom: bool) -> Box<dyn Iterator<Item=&'a u8> + 'a> {
+fn vertical_iterator<'a>(
+    forrest: &'a Forrest,
+    column: usize,
+    top_to_bottom: bool,
+) -> Box<dyn Iterator<Item = &'a u8> + 'a> {
     if top_to_bottom {
-        Box::new((0..forrest[0].len()).into_iter().map(move |row| &forrest[row][column]))
+        Box::new(
+            (0..forrest[0].len())
+                .into_iter()
+                .map(move |row| &forrest[row][column]),
+        )
     } else {
-        Box::new((0..forrest[0].len()).rev().into_iter().map(move |row| &forrest[row][column]))
+        Box::new(
+            (0..forrest[0].len())
+                .rev()
+                .into_iter()
+                .map(move |row| &forrest[row][column]),
+        )
     }
 }
 
-fn visible_tree_indexes(tree_row_iter: impl Iterator<Item=u8>) -> Vec<usize> {
-    let mut visbible_indexes = vec![];
+fn visible_tree_indexes(tree_row_iter: impl Iterator<Item = u8>) -> Vec<usize> {
+    let mut visible_indexes = vec![];
 
-    let mut higest_tree: u8 = 0;
-    for (index, tree_heigth) in tree_row_iter.enumerate() {
-        if tree_heigth > higest_tree || index == 0 {
-            higest_tree = tree_heigth;
-            visbible_indexes.push(index);
+    let mut highest_tree: u8 = 0;
+    for (index, tree_height) in tree_row_iter.enumerate() {
+        if tree_height > highest_tree || index == 0 {
+            highest_tree = tree_height;
+            visible_indexes.push(index);
         }
     }
 
-    visbible_indexes
+    visible_indexes
 }
 
 fn count_visible_trees(input: &str) -> usize {
     let forrest = read_forrest(input);
     let mut visible_tree_positions: Vec<(usize, usize)> = Vec::new();
-    
+
     let rows_count = forrest.len();
     let cols_count = forrest[0].len();
 
     println!("Processing forrest with {rows_count} rows and {cols_count} columns...");
 
     // Horizontal first
-    for row in 0..rows_count {        
-        let mut ltr: Vec<(usize, usize)> = visible_tree_indexes(forrest[row].iter().cloned()).iter().map(|index| (*index, row)).collect();
+    for row in 0..rows_count {
+        let mut ltr: Vec<(usize, usize)> = visible_tree_indexes(forrest[row].iter().cloned())
+            .iter()
+            .map(|index| (*index, row))
+            .collect();
         visible_tree_positions.append(&mut ltr);
-        
-        let mut rtl: Vec<(usize, usize)> = visible_tree_indexes(forrest[row].iter().rev().cloned()).iter().map(|index| (cols_count-*index-1, row)).collect();
+
+        let mut rtl: Vec<(usize, usize)> = visible_tree_indexes(forrest[row].iter().rev().cloned())
+            .iter()
+            .map(|index| (cols_count - *index - 1, row))
+            .collect();
         visible_tree_positions.append(&mut rtl);
     }
 
     // Vertical second
     for column in 0..cols_count {
-        {let ttb_iter = vertical_iterator(&forrest, column, true).cloned();
-        let mut ttb: Vec<(usize, usize)> = visible_tree_indexes(ttb_iter).iter().map(|index| (column, *index)).collect();
-        visible_tree_positions.append(&mut ttb);}
+        {
+            let ttb_iter = vertical_iterator(&forrest, column, true).cloned();
+            let mut ttb: Vec<(usize, usize)> = visible_tree_indexes(ttb_iter)
+                .iter()
+                .map(|index| (column, *index))
+                .collect();
+            visible_tree_positions.append(&mut ttb);
+        }
 
         let btt_iter = vertical_iterator(&forrest, column, false).cloned();
-        let mut btt: Vec<(usize, usize)> = visible_tree_indexes(btt_iter).iter().map(|index| (column, rows_count-*index-1)).collect();
+        let mut btt: Vec<(usize, usize)> = visible_tree_indexes(btt_iter)
+            .iter()
+            .map(|index| (column, rows_count - *index - 1))
+            .collect();
         visible_tree_positions.append(&mut btt);
     }
 
@@ -60,7 +87,11 @@ fn count_visible_trees(input: &str) -> usize {
     visible_tree_positions.len()
 }
 
-fn make_iter_from(forrest: &Forrest, start: (usize, usize), direction: (i32, i32)) -> impl Iterator<Item=u8> + '_ {
+fn make_iter_from(
+    forrest: &Forrest,
+    start: (usize, usize),
+    direction: (i32, i32),
+) -> impl Iterator<Item = u8> + '_ {
     struct ForrestIter<'a> {
         forrest: &'a Forrest,
         pos: (i32, i32),
@@ -77,10 +108,10 @@ fn make_iter_from(forrest: &Forrest, start: (usize, usize), direction: (i32, i32
             if self.pos.0 < 0 || self.pos.1 < 0 {
                 return None;
             }
-            
-            self.forrest.get(max(0, self.pos.0) as usize).and_then(|tree_row|
-                tree_row.get(max(0, self.pos.1) as usize).copied()
-            )
+
+            self.forrest
+                .get(max(0, self.pos.0) as usize)
+                .and_then(|tree_row| tree_row.get(max(0, self.pos.1) as usize).copied())
         }
     }
 
@@ -96,7 +127,6 @@ fn calc_scenic_score(forrest: &Forrest, row: usize, col: usize) -> usize {
     let cols_count = forrest[0].len();
     let tree_hight = forrest[row][col];
 
-
     let score_right = make_iter_from(forrest, (row, col), (0, 1))
         .position(|candidate_hight| candidate_hight >= tree_hight)
         .map_or_else(|| cols_count - col - 1, |pos| pos + 1);
@@ -104,22 +134,21 @@ fn calc_scenic_score(forrest: &Forrest, row: usize, col: usize) -> usize {
     let score_left = make_iter_from(forrest, (row, col), (0, -1))
         .position(|candidate_hight| candidate_hight >= tree_hight)
         .map_or_else(|| col, |pos| pos + 1);
-    
+
     let score_top = make_iter_from(forrest, (row, col), (-1, 0))
         .position(|candidate_hight| candidate_hight >= tree_hight)
         .map_or_else(|| row, |pos| pos + 1);
-    
 
     let score_bottom = make_iter_from(forrest, (row, col), (1, 0))
         .position(|candidate_hight| candidate_hight >= tree_hight)
         .map_or_else(|| rows_count - row - 1, |pos| pos + 1);
-    
+
     score_right * score_left * score_top * score_bottom
 }
 
 fn highest_scenic_score(input: &str) -> usize {
     let forrest = read_forrest(input);
-    
+
     let rows_count = forrest.len();
     let cols_count = forrest[0].len();
 
@@ -139,7 +168,11 @@ fn read_tree_row(input: &str) -> TreeRow {
 }
 
 fn read_forrest(input: &str) -> Forrest {
-    input.trim().split("\n").map(|line| read_tree_row(line)).collect()
+    input
+        .trim()
+        .split("\n")
+        .map(|line| read_tree_row(line))
+        .collect()
 }
 
 fn main() {
@@ -157,11 +190,7 @@ mod tests {
 
     #[test]
     fn vertical_iterator_works() {
-        let forrest = vec![
-            vec![1, 2, 3],
-            vec![4, 5, 6],
-            vec![7, 8, 9]
-        ];
+        let forrest = vec![vec![1, 2, 3], vec![4, 5, 6], vec![7, 8, 9]];
 
         let mut iter_ttb = vertical_iterator(&forrest, 1, true);
         assert_eq!(iter_ttb.next(), Some(&2));
@@ -176,7 +205,6 @@ mod tests {
         assert_eq!(iter_btt.next(), None);
     }
 
-    
     #[test]
     fn calc_scenic_score_works() {
         let vertical_forrest = vec![
@@ -189,7 +217,6 @@ mod tests {
         assert_eq!(calc_scenic_score(&vertical_forrest, 1, 5), 5);
         assert_eq!(calc_scenic_score(&vertical_forrest, 1, 0), 0);
         assert_eq!(calc_scenic_score(&vertical_forrest, 1, 6), 0);
-
 
         let horizontal_forrest = vec![
             vec![1, 1, 1],

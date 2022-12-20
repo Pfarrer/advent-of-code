@@ -1,20 +1,26 @@
-use nom::{*, bytes::complete::tag, character::complete::{anychar, digit1, newline}, multi::separated_list0, combinator::opt};
+use nom::{
+    bytes::complete::tag,
+    character::complete::{anychar, digit1, newline},
+    combinator::opt,
+    multi::separated_list0,
+    *,
+};
 
-use crate::{SupplyStack, Instruction};
+use crate::{Instruction, SupplyStack};
 
 pub fn parse(input: &str) -> (Vec<SupplyStack>, Vec<Instruction>) {
     let input_sections: Vec<_> = input.split("\n\n").collect();
 
     let (_, stacks) = supply_stacks(input_sections[0]).unwrap();
     let (_, instructions) = instructions(input_sections[1]).unwrap();
-    
+
     (stacks, instructions)
 }
 
 fn supply_stacks(input: &str) -> IResult<&str, Vec<SupplyStack>> {
-    let lines:Vec<_> = input.split("\n").collect();
+    let lines: Vec<_> = input.split("\n").collect();
     let mut lines_iter = lines.iter().rev();
-    
+
     let stack_numbers_line = lines_iter.next().unwrap();
     let stack_count = stack_numbers_line.split_whitespace().count();
 
@@ -71,9 +77,8 @@ fn instruction(input: &str) -> IResult<&str, Instruction> {
     let to = to_digits.parse().unwrap();
     let count = count_digits.parse().unwrap();
 
-    Ok((input, Instruction { from, to, count}))
+    Ok((input, Instruction { from, to, count }))
 }
-
 
 #[cfg(test)]
 mod tests {

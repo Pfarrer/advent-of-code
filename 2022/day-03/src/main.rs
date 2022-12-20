@@ -1,12 +1,12 @@
-use std::{fs::File, io::Read};
 use bitmaps::Bitmap;
 use itertools::Itertools;
+use std::{fs::File, io::Read};
 
 fn byte_to_priority(byte: &u8) -> usize {
     let priority = match byte {
         97..=122 => byte - 97 + 1,
         65..=90 => byte - 65 + 27,
-        _ => panic!()
+        _ => panic!(),
     };
     priority as usize
 }
@@ -15,12 +15,12 @@ fn calc_rucksack_priority(input: &str) -> usize {
     let bytes = input.as_bytes();
 
     let mut bitmap: Bitmap<64> = Bitmap::new();
-    for byte in &bytes[0..bytes.len()/2] {
+    for byte in &bytes[0..bytes.len() / 2] {
         let priority = byte_to_priority(byte);
         bitmap.set(priority, true);
     }
 
-    for byte in &bytes[bytes.len()/2..] {
+    for byte in &bytes[bytes.len() / 2..] {
         let priority = byte_to_priority(byte);
         if bitmap.get(priority) {
             return priority;
@@ -49,7 +49,10 @@ fn find_badge_item(bitmaps: [Bitmap<64>; 3]) -> usize {
 }
 
 fn rucksack_reorganization(input: &str) -> usize {
-    input.split("\n").map(|line| calc_rucksack_priority(line.trim())).sum()
+    input
+        .split("\n")
+        .map(|line| calc_rucksack_priority(line.trim()))
+        .sum()
 }
 
 fn rucksack_badges(input: &str) -> usize {

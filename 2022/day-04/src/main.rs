@@ -1,14 +1,16 @@
-use std::{fs::File, io::Read, ops::RangeInclusive, cmp};
+use std::{cmp, fs::File, io::Read, ops::RangeInclusive};
 
 use regex::Regex;
 
-fn extract_ranges(input: &str)-> (RangeInclusive<usize>, RangeInclusive<usize>) {
+fn extract_ranges(input: &str) -> (RangeInclusive<usize>, RangeInclusive<usize>) {
     let re = Regex::new(r"([0-9]+)-([0-9]+),([0-9]+)-([0-9]+)").unwrap();
 
     let capture = re.captures(input).unwrap();
 
-    let range1 = capture.get(1).unwrap().as_str().parse::<usize>().unwrap()..=capture.get(2).unwrap().as_str().parse::<usize>().unwrap();
-    let range2 = capture.get(3).unwrap().as_str().parse::<usize>().unwrap()..=capture.get(4).unwrap().as_str().parse::<usize>().unwrap();
+    let range1 = capture.get(1).unwrap().as_str().parse::<usize>().unwrap()
+        ..=capture.get(2).unwrap().as_str().parse::<usize>().unwrap();
+    let range2 = capture.get(3).unwrap().as_str().parse::<usize>().unwrap()
+        ..=capture.get(4).unwrap().as_str().parse::<usize>().unwrap();
 
     (range1, range2)
 }
@@ -31,17 +33,25 @@ fn is_range_fully_contained(input: &str) -> bool {
 
 fn is_range_overlapping(input: &str) -> bool {
     let (range1, range2) = extract_ranges(input);
-    
+
     // https://stackoverflow.com/a/12888920
     cmp::max(range1.start(), range2.start()) <= cmp::min(range1.end(), range2.end())
 }
 
 fn count_ranges_fully_contained(input: &str) -> usize {
-    input.trim().split("\n").filter(|line| is_range_fully_contained(line.trim())).count()
+    input
+        .trim()
+        .split("\n")
+        .filter(|line| is_range_fully_contained(line.trim()))
+        .count()
 }
 
 fn count_overlapping_ranges(input: &str) -> usize {
-    input.trim().split("\n").filter(|line| is_range_overlapping(line.trim())).count()
+    input
+        .trim()
+        .split("\n")
+        .filter(|line| is_range_overlapping(line.trim()))
+        .count()
 }
 
 fn main() {
