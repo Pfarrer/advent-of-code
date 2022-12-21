@@ -18,7 +18,8 @@
 * [x] Day 09
 * [x] Day 10
 * [ ] Day 11
-* [ ] Day 12
+* [x] Day 12
+  * Dependencies: pathfinding
 * [ ] Day 13
 * [ ] Day 14
 * [ ] Day 15
