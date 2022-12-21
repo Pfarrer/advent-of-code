@@ -20,7 +20,9 @@
 * [ ] Day 11
 * [x] Day 12
   * Dependencies: pathfinding
-* [ ] Day 13
+* [x] Day 13
+  * Dependencies: nom
+  * Noteworthy: PartialEq & PartialOrd implemented for custom enum
 * [ ] Day 14
 * [ ] Day 15
 * [ ] Day 16
