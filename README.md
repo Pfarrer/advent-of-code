@@ -1,5 +1,9 @@
 # My Advent of Code Solutions
 
+## 2023
+
+* [x] Day 01 (regex)
+
 ## 2022
 
 * [x] Day 01
