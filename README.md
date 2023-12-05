@@ -3,7 +3,7 @@
 ## 2023
 
 * [x] Day 01 (regex)
-* [ ] Day 02 (regex)
+* [x] Day 02 (itertools)
 
 ## 2022
 

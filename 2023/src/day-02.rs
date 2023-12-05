@@ -1,6 +1,8 @@
 use std::fs::read_to_string;
 
-#[derive(Debug)]
+use itertools::izip;
+
+#[derive(Debug, PartialEq)]
 enum Cube {
     Red,
     Green,
@@ -43,7 +45,6 @@ fn solve_part1(input: &str) -> usize {
     }
 
     let games = parser::parse(input);
-
     games
         .iter()
         .enumerate()
@@ -53,7 +54,36 @@ fn solve_part1(input: &str) -> usize {
 }
 
 fn solve_part2(input: &str) -> usize {
-    todo!()
+    fn max_count(cube: Cube, game: &Game) -> usize {
+        game.draws
+            .iter()
+            .flat_map(|draw| draw.cubes.iter().find(|(c, _)| *c == cube))
+            .map(|(_, count)| count)
+            .max()
+            .copied()
+            .unwrap_or(0)
+    }
+
+    let games = parser::parse(input);
+
+    let reds: Vec<usize> = games
+        .iter()
+        .map(|game| max_count(Cube::Red, game))
+        .collect();
+    let greens: Vec<usize> = games
+        .iter()
+        .map(|game| max_count(Cube::Green, game))
+        .collect();
+    let blues: Vec<usize> = games
+        .iter()
+        .map(|game| max_count(Cube::Blue, game))
+        .collect();
+
+    let mut res = 0;
+    for (r, g, b) in izip!(reds, greens, blues) {
+        res += r * g * b;
+    }
+    res
 }
 
 #[cfg(test)]
