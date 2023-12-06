@@ -4,6 +4,7 @@
 
 * [x] Day 01 (regex)
 * [x] Day 02 (itertools)
+* [x] Day 03 (itertools, regex)
 
 ## 2022
 
