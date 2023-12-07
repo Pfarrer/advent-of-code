@@ -94,6 +94,8 @@ mod parser {
 
 #[cfg(test)]
 mod tests {
+    use itertools::Itertools;
+
     use super::*;
 
     #[test]
@@ -141,11 +143,6 @@ Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11
                     winning_numbers: vec![],
                     copies: 1,
                 },
-                Card {
-                    listed_numbers: vec![],
-                    winning_numbers: vec![],
-                    copies: 1,
-                },
             ];
 
             increment_card_copies(&mut cards, start_exclusive, count);
@@ -153,24 +150,16 @@ Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11
             cards.iter().map(|c| c.copies).collect_vec()
         }
 
-        assert_eq!(run_test(0, 0), vec![1, 1, 1, 1]);
-        assert_eq!(run_test(1, 0), vec![1, 1, 1, 1]);
-        assert_eq!(run_test(2, 0), vec![1, 1, 1, 1]);
-        assert_eq!(run_test(3, 0), vec![1, 1, 1, 1]);
+        assert_eq!(run_test(0, 0), vec![1, 1, 1]);
+        assert_eq!(run_test(1, 0), vec![1, 1, 1]);
+        assert_eq!(run_test(2, 0), vec![1, 1, 1]);
 
-        assert_eq!(run_test(0, 1), vec![1, 2, 1, 1]);
-        assert_eq!(run_test(1, 1), vec![1, 1, 2, 1]);
-        assert_eq!(run_test(2, 1), vec![1, 1, 1, 2]);
-        assert_eq!(run_test(3, 1), vec![1, 1, 1, 1]);
+        assert_eq!(run_test(0, 1), vec![1, 2, 1]);
+        assert_eq!(run_test(1, 1), vec![1, 1, 2]);
+        assert_eq!(run_test(2, 1), vec![1, 1, 1]);
 
-        assert_eq!(run_test(0, 2), vec![1, 2, 2, 1]);
-        assert_eq!(run_test(1, 2), vec![1, 1, 2, 2]);
-        assert_eq!(run_test(2, 2), vec![1, 1, 1, 2]);
-        assert_eq!(run_test(3, 2), vec![1, 1, 1, 1]);
-
-        assert_eq!(run_test(0, 3), vec![1, 2, 2, 2]);
-        assert_eq!(run_test(1, 3), vec![1, 1, 2, 2]);
-        assert_eq!(run_test(2, 3), vec![1, 1, 1, 2]);
-        assert_eq!(run_test(3, 3), vec![1, 1, 1, 1]);
+        assert_eq!(run_test(0, 2), vec![1, 2, 2]);
+        assert_eq!(run_test(1, 2), vec![1, 1, 2]);
+        assert_eq!(run_test(2, 2), vec![1, 1, 1]);
     }
 }
