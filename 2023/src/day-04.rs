@@ -32,7 +32,7 @@ fn update_card_copies(cards: &mut Vec<Card>) {
 }
 
 fn increment_card_copies(cards: &mut Vec<Card>, start_exclusive: usize, count: usize) {
-    if count == 0 || cards.len() == start_exclusive+1 {
+    if count == 0 || cards.len() == start_exclusive + 1 {
         return;
     }
 

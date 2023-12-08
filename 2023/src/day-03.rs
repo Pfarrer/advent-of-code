@@ -62,21 +62,23 @@ fn gear_ratios(blueprint: &Blueprint) -> Vec<usize> {
         .filter(|sym| sym.char == '*')
         .collect();
 
-    gears.iter().map(|sym| {
-        let adjacent_numbers = blueprint
-            .numbers
-            .iter()
-            .filter(|num| number_has_adjacent_symbol(num, &vec![sym.clone()]))
-            .map(|num| num.value)
-            .collect_vec();
+    gears
+        .iter()
+        .map(|sym| {
+            let adjacent_numbers = blueprint
+                .numbers
+                .iter()
+                .filter(|num| number_has_adjacent_symbol(num, &vec![sym.clone()]))
+                .map(|num| num.value)
+                .collect_vec();
 
-        if adjacent_numbers.len() == 2 {
-            adjacent_numbers[0] * adjacent_numbers[1]
-        } else {
-            0
-        }
-    })
-    .collect_vec()
+            if adjacent_numbers.len() == 2 {
+                adjacent_numbers[0] * adjacent_numbers[1]
+            } else {
+                0
+            }
+        })
+        .collect_vec()
 }
 
 mod parser {
