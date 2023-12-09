@@ -24,18 +24,18 @@ mod parser {
 mod tests {
     use super::*;
 
-    const input: &str = r#"
+    const INPUT: &str = r#"
 "#;
 
     #[test]
     fn part1_works() {
-        let solution = solve_part1(&input);
+        let solution = solve_part1(&INPUT);
         assert_eq!(solution, );
     }
     
     // #[test]
     // fn part2_works() {
-    //     let solution = solve_part2(&input);
+    //     let solution = solve_part2(&INPUT);
     //     assert_eq!(solution, );
     // }
 }

@@ -1,7 +1,5 @@
 use std::{collections::HashMap, fs::read_to_string};
 
-use itertools::Itertools;
-
 type Id = usize;
 
 struct Task {
